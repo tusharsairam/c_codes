@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
+#include <omp.h>
 
 #define MAXCHAR_LINE 100
-#define N_BOOT 10000000 // I run a fairly powerful machine so I chose 10 million
+#define N_BOOT 10000000
 
 int main(int argc, char *argv[]) 
 {
@@ -34,14 +34,16 @@ int main(int argc, char *argv[])
 	
 	int t_large_count = 0;
 	int x1_mean, x2_mean, x1_var, x2_var, t_value;
-	srand(time(NULL));
 
 	// Random sample with replacement
+	#pragma omp parallel for private(x1_mean, x2_mean, x1_var, x2_var, t_value) reduction(+:t_large_count)
 	for (int x=0; x<N_BOOT; ++x) {
 		x1_mean = 0; 
 		x2_mean = 0;
-	
+
 		for (int i=0; i<row_count; ++i) {
+			// On hindsight, I could just do a single srand(time(NULL)) outside all loops?
+			srand(x+i); 
 			int rand_idx = rand() % row_count;
 			x1_mean += elements[rand_idx][0];
 			x2_mean += elements[rand_idx][1];
@@ -56,6 +58,7 @@ int main(int argc, char *argv[])
 		x2_var = 0.0;
 		
 		for (int i=0; i<row_count; ++i) {
+			srand(x+i);
 			int rand_idx = rand() % row_count;
 			x1_var += pow(elements[rand_idx][0] - x1_mean, 2);
 			x2_var += pow(elements[rand_idx][1] - x2_mean, 2);
@@ -70,7 +73,6 @@ int main(int argc, char *argv[])
 		t_value = (x2_mean - x1_mean) / sqrt(x1_var + x2_var);
 
 		// printf("t statistic: %f\n", t_value);
-		// 00.759133 was the value of the t-stat obtained from ex. 3
 		if (t_value >= 0.759133) 
 			t_large_count++;
 	}
