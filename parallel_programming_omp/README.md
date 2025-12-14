@@ -3,7 +3,7 @@ My attempts at the 5 problem statements given in [this website](https://gribblel
 Using the `time` command in Linux, the timing profiles of Ex. 4 and 5 are as follows (Real time value):
 - ex4.c takes 4.146 seconds
 - ex5.c takes 0.468 seconds with `rand_r`
-- ex5.c takes 3 minutes and 20.224 seconds with `rand`! 
+- ex5.c (ex5\_norand\_r.c) takes 3 minutes and 20.224 seconds with `rand`! 
 
 Couple of interesting tidbits I've learnt in the process
 
