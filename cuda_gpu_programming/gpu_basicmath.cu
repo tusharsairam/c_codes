@@ -3,7 +3,7 @@
 #include <math.h>
 #include <time.h>
 
-#define N 50
+#define N 50000
 
 // Usually best to go with a multiple of 2
 #define N_THREADS 32 
